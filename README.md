@@ -12,7 +12,7 @@ Development and Evaluation of RAG-powered Academic Literature Search Assistant a
 # API: For papers the application will connect to arxiv.org via its API to get papers.
 https://info.arxiv.org/help/api/user-manual.html#Architecture
 # Project Scope:
-## 1.	Primary Objective: To create an intelligent search assistant application that leverages a Retrieval-Augmented Generation (RAG) model to provide users with concise, relevant summaries of academic papers based on their search queries.
+ 1.	Primary Objective: To create an intelligent search assistant application that leverages a Retrieval-Augmented Generation (RAG) model to provide users with concise, relevant summaries of academic papers based on their search queries.
 2.	Secondary Objective: To assess the performance of a Retrieval-Augmented Generation (RAG) application in the context of academic literature search and to explore methodologies for evaluating its effectiveness.
 3.	Target User Group: Academics, researchers, and students who require efficient tools to aid in the literature review process and enhance the quality of their research.
 4.	Core Features:
