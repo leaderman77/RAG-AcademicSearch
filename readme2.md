@@ -67,21 +67,7 @@ Example entries:
 | 37907517 | TaGRAS27 | Triticum aestivum | abiotic stress tolerance | improves | The study revealed a significant increase in the expression... | RNA-seq and qRT-PCR |
 | 38002936 | Yr72 | Triticum aestivum | stripe rust resistance | confers | The common wheat landraces AUS27506 and AUS27894 displayed... | bulked segregant analysis |
 
-## Output Format
 
-After trait mapping, the system adds the following columns to the extraction results:
-
-| Column | Description |
-|--------|-------------|
-| exact_match | Boolean indicating whether an exact match was found |
-| synonym_match | Boolean indicating whether a synonym match was found |
-| semantic_matches | List of top semantically similar matches with scores |
-| match_type | Type of match (exact, synonym, semantic, or none) |
-| matched_id | ID of the best matching trait term |
-| matched_name | Name of the best matching trait term |
-| confidence | Confidence score of the match (1.0 for exact/synonym matches) |
-| same_biological_concept | Whether the matched terms represent the same biological concept (for semantic matches) |
-| reasoning | Explanation of the validation assessment |
 
 ## Experimental Results
 
@@ -89,7 +75,7 @@ After trait mapping, the system adds the following columns to the extraction res
 
 | Model | Total Entries | PMIDs with Relationships | Processing Time | Cost |
 |-------|---------------|--------------------------|-----------------|------|
-| Gemini 2.0 Flash | 374 | N/A | N/A | N/A |
+| Gemini 2.0 Flash | 374 | 110/200 | 33.50s | $0.0311 |
 | GPT-4o-mini | 172 | 76/200 | 41.36s | $0.0212 |
 | GPT-4.1-nano | 188 | 106/200 | 24.24s | $0.0119 |
 | GPT-4.1-mini | 176 | 68/200 | 40.65s | $0.1732 |
@@ -139,6 +125,7 @@ After trait mapping, the system adds the following columns to the extraction res
 
 | Model | Extraction Cost | Mapping Evaluation Cost | Total Cost per 200 PMIDs |
 |-------|----------------|------------------------|--------------------------|
+| Gemini 2.0 Flash | $0.0311 | N/A | $0.0311+ |
 | GPT-4o-mini | $0.0212 | N/A | $0.0212+ |
 | GPT-4.1-nano | $0.0119 | N/A | $0.0119+ |
 | GPT-4.1-mini | $0.1732 | N/A | $0.1732+ |
@@ -150,15 +137,20 @@ After trait mapping, the system adds the following columns to the extraction res
 
 ### Key Findings
 
-1. **Extraction Volume**: ChatGPT-4o-latest extracted the most gene-trait relationships (253), while GPT-4o-mini extracted the fewest (172).
+1. **Extraction Volume**: 
+   - Gemini 2.0 Flash extracted the most gene-trait relationships (374)
+   - ChatGPT-4o-latest extracted the second most (253)
+   - GPT-4o-mini extracted the fewest (172)
 
 2. **Precision vs. Recall**:
    - GPT-4.1-mini achieves the highest valid rate (82.05%) with the lowest number of invalid cases (14)
-   - ChatGPT-4o-latest provides the most valid mappings in absolute numbers (73) with a valid rate of 78.49%
+   - Gemini 2.0 Flash provides the most valid mappings in absolute numbers (107) due to its higher extraction volume
+   - ChatGPT-4o-latest has the second highest number of valid mappings (73) with a valid rate of 78.49%
 
 3. **Cost Efficiency**:
    - GPT-4.1-nano offers the best cost-performance balance, with the lowest cost ($0.0119) while maintaining competitive performance (77.01% valid rate)
-   - ChatGPT-4o-latest is significantly more expensive than other models but provides the highest volume of extractions
+   - Gemini 2.0 Flash provides excellent value with high extraction volume at relatively low cost ($0.0311)
+   - ChatGPT-4o-latest is significantly more expensive than other models
 
 4. **Semantic Matching Quality**:
    - GPT-4.1-mini has the highest quality semantic matches (69.6% same biological concept)
@@ -168,15 +160,20 @@ After trait mapping, the system adds the following columns to the extraction res
 
 The choice between models depends on specific use case requirements:
 
+- Choose **Gemini 2.0 Flash** when:
+  - Maximizing extraction volume is the priority
+  - Good balance between cost and performance is needed
+  - High number of total valid mappings is desired
+
 - Choose **GPT-4.1-mini** when:
-  - Higher precision is crucial
+  - Higher precision is crucial (highest valid rate at 82.05%)
   - The cost of incorrect mappings is significant
   - Budget constraints are moderate
 
 - Choose **ChatGPT-4o-latest** when:
-  - Maximizing the total number of valid trait mappings is the priority
+  - High-quality extractions are needed
   - Budget is less constrained
-  - Higher extraction volume is desired
+  - A good balance of precision and recall is desired
 
 - Choose **GPT-4.1-nano** when:
   - Cost efficiency is the primary concern
