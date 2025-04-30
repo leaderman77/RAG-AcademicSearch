@@ -26,7 +26,8 @@ Our system employs a three-step process:
 
 Our system follows a three-step workflow for extracting, mapping, and evaluating trait information:
 
-![Trait Ontology Mapping Workflow](workflow-chart)
+![workflow-chart](https://github.com/user-attachments/assets/d355f6e3-50a7-4754-99dc-42c3f95fc033)
+
 
 ## Input Format
 
