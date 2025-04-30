@@ -24,31 +24,9 @@ Our system employs a three-step process:
 
 ## Workflow
 
-### Step 1: Gene-Trait Relationship Extraction with LLMs
+Our system follows a three-step workflow for extracting, mapping, and evaluating trait information:
 
-Extract gene-trait relationships from scientific publications (PubMed wheat-based publications) using various LLM models:
-
-- Input: PubMed article abstracts/texts
-- Process: LLM-based extraction using bulk processing with optimized prompts
-- Output: Structured gene-trait relationship tables
-
-### Step 2: Trait Name to Ontology Mapping
-
-Map extracted trait names to standardized Trait Ontology terms:
-
-- **Embedding Model**: `text-embedding-3-large`
-- **Three-Tier Matching Approach**:
-  - **Tier 1**: Exact name matching
-  - **Tier 2**: Synonym matching
-  - **Tier 3**: Semantic similarity matching using cosine similarity of embeddings
-
-### Step 3: Mapping Evaluation using Advanced LLMs
-
-Evaluate semantic matches using LLM-based validation:
-
-- **Model**: `chatgpt-4o-latest`
-- **Process**: Bulk evaluation of trait name-ontology term pairs
-- **Output**: Validation of whether matched terms represent the same biological concept
+![Trait Ontology Mapping Workflow](workflow-chart)
 
 ## Input Format
 
@@ -125,9 +103,9 @@ Example entries:
 
 | Model | Extraction Cost | Mapping Evaluation Cost | Total Cost per 200 PMIDs |
 |-------|----------------|------------------------|--------------------------|
-| Gemini 2.0 Flash | $0.0311 | N/A | $0.0311+ |
-| GPT-4o-mini | $0.0212 | N/A | $0.0212+ |
 | GPT-4.1-nano | $0.0119 | N/A | $0.0119+ |
+| GPT-4o-mini | $0.0212 | N/A | $0.0212+ |
+| Gemini 2.0 Flash | $0.0311 | N/A | $0.0311+ |
 | GPT-4.1-mini | $0.1732 | N/A | $0.1732+ |
 | ChatGPT-4o-latest | $1.1419 | N/A | $1.1419+ |
 
