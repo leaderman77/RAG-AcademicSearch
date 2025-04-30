@@ -1,18 +1,54 @@
-# Trait Ontology Mapping and Evaluation System
+# Trait Ontology Extraction, Mapping and Evaluation System
 
-A comprehensive system for mapping trait names and trait IDs of extracted gene-trait relationships and evaluating these mappings using OpenAI's LLM model.
+A comprehensive system for extracting gene-trait relationships from scientific literature, mapping trait names to standardized ontology terms, and evaluating these mappings using advanced LLM models.
+
+## System Overview
+
+Our system employs a three-step process:
+
+1. **Gene-Trait Relationship Extraction**: Extract gene-trait relationships from scientific publications using LLM models
+2. **Trait Ontology Mapping**: Map extracted trait names to standardized Trait Ontology (TO) terms and IDs
+3. **Mapping Evaluation**: Evaluate the quality of semantic mappings using LLM-based validation
 
 ## Features
 
-- **Ontology Parsing**: Parse OBO format files into structured data.
-- **Trait Evaluation**: Evaluate trait names against ontology terms using a three-tier matching approach:
+- **Relationship Extraction**: Extract gene-trait relationships from scientific publications using various LLM models
+- **Ontology Parsing**: Parse OBO format files into structured data
+- **Trait Evaluation**: Map trait names to ontology terms using a three-tier matching approach:
   1. Exact name matching
   2. Synonym matching
-  3. Semantic similarity matching using semantic embeddings
-- **Multiple Embedding Models**: Support for both BERT-based and OpenAI embeddings.
-- **Comprehensive Evaluation**: Detailed metrics on match quality and confidence.
-- **Evaluation of Semantically Matched Mappings**: Generate responses from LLM to evaluate matched trait names if their confidence score is above 50 and the matched type is semantic.
-- **Analysis of Mapping Evaluation Results**: Evaluate matched cases using three metrics and assess the performance of different gene-trait relation tables.
+  3. Semantic similarity matching using embeddings
+- **Multiple LLM Models**: Support for several OpenAI models with detailed comparative analysis
+- **Comprehensive Evaluation**: Detailed metrics on match quality and confidence
+- **LLM-Based Mapping Validation**: Generate responses from advanced LLMs to evaluate semantically matched traits
+
+## Workflow
+
+### Step 1: Gene-Trait Relationship Extraction with LLMs
+
+Extract gene-trait relationships from scientific publications (PubMed wheat-based publications) using various LLM models:
+
+- Input: PubMed article abstracts/texts
+- Process: LLM-based extraction using bulk processing with optimized prompts
+- Output: Structured gene-trait relationship tables
+
+### Step 2: Trait Name to Ontology Mapping
+
+Map extracted trait names to standardized Trait Ontology terms:
+
+- **Embedding Model**: `text-embedding-3-large`
+- **Three-Tier Matching Approach**:
+  - **Tier 1**: Exact name matching
+  - **Tier 2**: Synonym matching
+  - **Tier 3**: Semantic similarity matching using cosine similarity of embeddings
+
+### Step 3: Mapping Evaluation using Advanced LLMs
+
+Evaluate semantic matches using LLM-based validation:
+
+- **Model**: `chatgpt-4o-latest`
+- **Process**: Bulk evaluation of trait name-ontology term pairs
+- **Output**: Validation of whether matched terms represent the same biological concept
 
 ## Input Format
 
@@ -31,164 +67,119 @@ Example entries:
 | 37907517 | TaGRAS27 | Triticum aestivum | abiotic stress tolerance | improves | The study revealed a significant increase in the expression... | RNA-seq and qRT-PCR |
 | 38002936 | Yr72 | Triticum aestivum | stripe rust resistance | confers | The common wheat landraces AUS27506 and AUS27894 displayed... | bulked segregant analysis |
 
-## Embedding Process
+## Output Format
 
-The embedding process follows a systematic workflow to match trait names from gene-trait relations with standardized trait ontology terms:
-
-### Workflow
-
-1. **Ontology Preparation**
-   * Parse the Trait Ontology OBO file
-   * Extract all trait terms, IDs, and synonyms
-   * Embed all ontology terms and their synonyms
-
-2. **Input Processing**
-   * Read the gene-trait relation CSV file
-   * Extract trait names for matching
-
-3. **Three-Tier Matching Approach**
-   * **Tier 1:** Check for exact name matches between trait names and ontology terms
-   * **Tier 2:** Check for synonym matches if exact match fails
-   * **Tier 3:** Apply semantic similarity matching using embeddings if previous tiers fail
-   
-4. **Semantic Matching Process**
-   * Embed each trait name from the input table
-   * Compare embeddings against all ontology term embeddings
-   * Identify the top 5 most similar terms based on cosine similarity
-   * Select the match with the highest confidence score
-
-5. **Output Generation**
-   * Augment the original table with matching results
-   * Add the following columns:
-     * `exact_match` (boolean) - Whether an exact match was found
-     * `synonym_match` (boolean) - Whether a synonym match was found
-     * `semantic_matches` (list) - Top 5 semantically similar matches with scores
-     * `match_type` (string) - Type of match (exact, synonym, semantic, or none)
-     * `matched_id` (string) - ID of the best matching trait term
-     * `matched_name` (string) - Name of the best matching trait term
-     * `confidence` (float) - Confidence score of the match (1.0 for exact/synonym matches)
-
-### Example Output
-
-**Semantic Matches Example:**
-```python
-[("TO:0000975", "grain width", 0.88), 
- ("TO:0002625", "fruit size", 0.84), 
- ("TO:1000011", "fruit position", 0.83), 
- ("TO:0000734", "grain length", 0.82), 
- ("TO:0001108", "grain volume", 0.8)]
-```
-
-**Example Record After Embedding:**
-
-| pmid | gene | species | trait_name | exact_match | synonym_match | semantic_matches | match_type | matched_id | matched_name | confidence |
-|------|------|---------|------------|-------------|---------------|------------------|------------|------------|--------------|------------|
-| 38671351 | TaUBC25 | Triticum aestivum | kernel thickness | FALSE | FALSE | [('TO:0000975', 'grain width', 0.88), ('TO:0002625', 'fruit size', 0.84), ('TO:1000011', 'fruit position', 0.83), ('TO:0000734', 'grain length', 0.82), ('TO:0001108', 'grain volume', 0.8)] | semantic | TO:0000975 | grain width | 0.88 |
-| 38063491 | TaBBE64 | Triticum aestivum | wheat stripe rust disease resistance | TRUE | FALSE | [] | exact | TO:0020055 | wheat stripe rust disease resistance | 1 |
-
-## LLM-Based Mapping Evaluation
-
-To evaluate mapping results, the system uses OpenAI's `chatgpt-4o-latest` model. The evaluation is performed in bulk, with 30 pairs per request (default value), based on analysis showing that larger batches degrade response quality.
-
-### Evaluation Prompts
-
-Prompts are created for LLM-based mapping evaluation and stored in the `mapping_eval_prompts` folder inside the `evaluation` folder.
-
-The LLM receives a trait name from the gene-trait relation extraction table and its matched name as a pair. The model outputs the evaluation with two additional fields added to the embedding results:
-- `same_biological_concept` 
-- `reasoning`
-
-### Example LLM Evaluation Output
-
-The final result of LLM mapping evaluation adds two additional columns:
+After trait mapping, the system adds the following columns to the extraction results:
 
 | Column | Description |
 |--------|-------------|
-| same_biological_concept | Whether the original trait and matched trait represent the same biological concept (Yes/No) |
-| reasoning | Brief explanation of the reasoning behind the assessment |
+| exact_match | Boolean indicating whether an exact match was found |
+| synonym_match | Boolean indicating whether a synonym match was found |
+| semantic_matches | List of top semantically similar matches with scores |
+| match_type | Type of match (exact, synonym, semantic, or none) |
+| matched_id | ID of the best matching trait term |
+| matched_name | Name of the best matching trait term |
+| confidence | Confidence score of the match (1.0 for exact/synonym matches) |
+| same_biological_concept | Whether the matched terms represent the same biological concept (for semantic matches) |
+| reasoning | Explanation of the validation assessment |
 
-**Example of Final LLM Evaluation Output:**
+## Experimental Results
 
-| pmid | trait_name | matched_id | matched_name | confidence | same_biological_concept | reasoning |
-|------|------------|------------|--------------|------------|-------------------------|-----------|
-| 39256758 | Fusarium head blight resistance | TO:0000663 | wheat fusarium head blight resistance | 0.92 | Yes | 'Fusarium head blight resistance' and 'wheat fusarium head blight resistance' describe the same trait, with the latter specifying the crop species. |
-| 38671351 | kernel thickness | TO:0000975 | grain width | 0.88 | No | The original trait refers to kernel thickness, while the matched trait refers to grain width, which are related but distinct measurements. |
+### Model Comparison for Gene-Trait Extraction
 
-## Evaluation Results
+| Model | Total Entries | PMIDs with Relationships | Processing Time | Cost |
+|-------|---------------|--------------------------|-----------------|------|
+| Gemini 2.0 Flash | 374 | N/A | N/A | N/A |
+| GPT-4o-mini | 172 | 76/200 | 41.36s | $0.0212 |
+| GPT-4.1-nano | 188 | 106/200 | 24.24s | $0.0119 |
+| GPT-4.1-mini | 176 | 68/200 | 40.65s | $0.1732 |
+| ChatGPT-4o-latest | 253 | 90/200 | 27.77s | $1.1419 |
 
-### Initial Semantic Matching Results
+### Initial Trait Mapping Results
 
-| Model Version | Total | Exact | Synonym | Semantic | No Match |
-|---------------|-------|-------|---------|----------|----------|
-| GPT-4o Bulk-5 (C) | 124 | 32 | 4 | 48 | 40 |
-| GPT-4o-Mini Bulk-5 (A) | 122 | 26 | 10 | 44 | 42 |
-| GPT Mini Single (B) | 180 | 34 | 9 | 61 | 76 |
+| Model | Total Traits | Exact Matches | Synonym Matches | Semantic Matches |
+|-------|--------------|---------------|-----------------|------------------|
+| Gemini 2.0 Flash | 374 | 196 (52.41%) | 24 (6.42%) | 154 (41.18%) |
+| GPT-4o-mini | 172 | 91 (52.91%) | 8 (4.65%) | 73 (42.44%) |
+| GPT-4.1-nano | 188 | 99 (52.66%) | 6 (3.19%) | 83 (44.15%) |
+| GPT-4.1-mini | 176 | 96 (54.55%) | 11 (6.25%) | 69 (39.20%) |
+| ChatGPT-4o-latest | 253 | 158 (62.45%) | 8 (3.16%) | 87 (34.39%) |
 
-### After LLM Evaluation of Semantic Matches (Ranked by Match Rate)
+### Unique Trait Name Statistics
 
-| Model Version | Total | Valid Matches | Invalid Matches | Match Rate |
-|---------------|-------|---------------|-----------------|------------|
-| GPT-4o Bulk-5 (C) | 124 | 75 | 49 | 60.00 |
-| GPT-4o-Mini Bulk-5 (A) | 122 | 71 | 51 | 58.20 |
-| GPT Mini Single (B) | 180 | 93 | 87 | 51.67 |
+| Model | Total Unique Traits | Exact | Synonym | Semantic |
+|-------|---------------------|-------|---------|----------|
+| Gemini 2.0 Flash | 140 | 44 (31.43%) | 10 (7.14%) | 86 (61.43%) |
+| GPT-4o-mini | 83 | 28 (33.73%) | 5 (6.02%) | 50 (60.24%) |
+| GPT-4.1-nano | 87 | 28 (32.18%) | 3 (3.45%) | 56 (64.37%) |
+| GPT-4.1-mini | 78 | 26 (33.33%) | 6 (7.69%) | 46 (58.97%) |
+| ChatGPT-4o-latest | 93 | 36 (38.71%) | 5 (5.38%) | 52 (55.91%) |
 
-### Breakdown of Valid Matches
+### Semantic Mapping Evaluation Results
 
-| Model Version | Exact | Synonym | LLM-Validated Semantic | Total Valid |
-|---------------|-------|---------|------------------------|-------------|
-| GPT Mini Single (B) | 34 | 9 | 50 | 93 |
-| GPT-4o Bulk-5 (C) | 32 | 4 | 39 | 75 |
-| GPT-4o-Mini Bulk-5 (A) | 26 | 10 | 35 | 71 |
+| Model | Total Unique Semantic Pairs | Same Biological Concept | Different Biological Concept |
+|-------|----------------------------|--------------------------|------------------------------|
+| Gemini 2.0 Flash | 86 | 53 (61.6%) | 33 (38.4%) |
+| GPT-4o-mini | 50 | 29 (58.0%) | 21 (42.0%) |
+| GPT-4.1-nano | 56 | 36 (64.3%) | 20 (35.7%) |
+| GPT-4.1-mini | 46 | 32 (69.6%) | 14 (30.4%) |
+| ChatGPT-4o-latest | 52 | 32 (61.5%) | 20 (38.5%) |
 
-### Unique Trait Name Matching Performance (Ranked by Valid Rate)
+### Overall Valid vs. Invalid Cases
 
-| Model Version | Total Unique Traits | Exact | Synonym | Semantic | Semantic Yes | Semantic No | Valid Cases | Invalid Cases | Valid Rate |
-|---------------|---------------------|-------|---------|----------|--------------|-------------|-------------|---------------|------------|
-| GPT-4o Mini Bulk-5 | 71 | 18 | 6 | 47 | 16 | 31 | 40 | 31 | 56.34 |
-| GPT-4o Mini Single | 96 | 18 | 6 | 72 | 24 | 48 | 48 | 48 | 50.00 |
-| GPT-4o Bulk-5 | 64 | 17 | 4 | 43 | 12 | 31 | 33 | 31 | 51.56 |
+| Model | Total Unique Traits | Valid Cases (Exact + Synonym + Valid Semantic) | Invalid Cases | Valid Rate |
+|-------|---------------------|-----------------------------------------------|---------------|------------|
+| Gemini 2.0 Flash | 140 | 107 | 33 | 76.43% |
+| GPT-4o-mini | 83 | 62 | 21 | 74.70% |
+| GPT-4.1-nano | 87 | 67 | 20 | 77.01% |
+| GPT-4.1-mini | 78 | 64 | 14 | 82.05% |
+| ChatGPT-4o-latest | 93 | 73 | 20 | 78.49% |
 
-*Note: Valid Cases = Exact + Synonym + Semantic Yes; Invalid Cases = Semantic No; Valid Rate = (Valid Cases / Total Unique Traits) × 100*
+## Cost Analysis
 
-*Note: LLM-Validated Semantic matches were validated using `chatgpt-4o-latest` against `text-embedding-3-large` model outputs.*
+| Model | Extraction Cost | Mapping Evaluation Cost | Total Cost per 200 PMIDs |
+|-------|----------------|------------------------|--------------------------|
+| GPT-4o-mini | $0.0212 | N/A | $0.0212+ |
+| GPT-4.1-nano | $0.0119 | N/A | $0.0119+ |
+| GPT-4.1-mini | $0.1732 | N/A | $0.1732+ |
+| ChatGPT-4o-latest | $1.1419 | N/A | $1.1419+ |
+
+*Note: Mapping evaluation costs use chatgpt-4o-latest for all models; exact costs for this step are not included in the table but should be factored into total project costs.*
 
 ## Performance Analysis
 
-### Precision and Recall Trade-offs
+### Key Findings
 
-In ontology mapping tasks, different use cases may prioritize different aspects of performance:
+1. **Extraction Volume**: ChatGPT-4o-latest extracted the most gene-trait relationships (253), while GPT-4o-mini extracted the fewest (172).
 
-- **Precision**: Focuses on minimizing false positives; crucial when the cost of incorrect matches is high
-- **Recall**: Prioritizes finding as many valid matches as possible; important when comprehensive coverage is essential
+2. **Precision vs. Recall**:
+   - GPT-4.1-mini achieves the highest valid rate (82.05%) with the lowest number of invalid cases (14)
+   - ChatGPT-4o-latest provides the most valid mappings in absolute numbers (73) with a valid rate of 78.49%
 
-#### Precision vs. Total Valid Matches
+3. **Cost Efficiency**:
+   - GPT-4.1-nano offers the best cost-performance balance, with the lowest cost ($0.0119) while maintaining competitive performance (77.01% valid rate)
+   - ChatGPT-4o-latest is significantly more expensive than other models but provides the highest volume of extractions
 
-| Model | Valid Cases | Invalid Cases | Total Unique Traits | Precision | Total Valid Matches |
-|-------|-------------|---------------|---------------------|-----------|---------------------|
-| GPT-4o Mini Bulk-5 | 40 | 31 | 71 | 56.34% | 40 |
-| GPT-4o Bulk-5 | 33 | 31 | 64 | 51.56% | 33 |
-| GPT-4o Mini Single | 48 | 48 | 96 | 50.00% | 48 |
+4. **Semantic Matching Quality**:
+   - GPT-4.1-mini has the highest quality semantic matches (69.6% same biological concept)
+   - GPT-4o-mini has the lowest quality semantic matches (58.0% same biological concept)
 
-This analysis reveals important trade-offs:
-
-- **GPT-4o Mini Single** produces the highest absolute number of valid matches (48), making it the preferred choice when maximizing the total number of valid trait mappings is the priority. However, it also generates the most invalid matches (48), resulting in a 50% precision rate.
-
-- **GPT-4o Mini Bulk-5** achieves the highest precision at 56.34%, meaning it has the best ratio of valid to invalid matches. This model identified 40 valid cases out of 71 total unique traits with only 31 invalid cases, making it optimal when reducing false positives is more important than maximizing the total number of matches.
-
-- **GPT-4o Bulk-5** falls between the other models in terms of performance, with moderate precision (51.56%) but the lowest total number of valid matches (33).
-
-#### Practical Implications
+### Practical Implications
 
 The choice between models depends on specific use case requirements:
 
-- Choose **GPT-4o Mini Single** when:
-  - The goal is to capture as many valid trait mappings as possible
-  - Additional validation steps can be implemented to filter out false positives
-  - Comprehensive coverage is more important than precision
-
-- Choose **GPT-4o Mini Bulk-5** when:
-  - Higher confidence in each match is crucial
+- Choose **GPT-4.1-mini** when:
+  - Higher precision is crucial
   - The cost of incorrect mappings is significant
-  - A better balance between precision and total matches is desired
+  - Budget constraints are moderate
 
-These results demonstrate that optimizing for either precision or total valid matches requires different approaches in the trait ontology mapping process.
+- Choose **ChatGPT-4o-latest** when:
+  - Maximizing the total number of valid trait mappings is the priority
+  - Budget is less constrained
+  - Higher extraction volume is desired
+
+- Choose **GPT-4.1-nano** when:
+  - Cost efficiency is the primary concern
+  - A good balance of performance and economy is needed
+
+These results demonstrate that different models offer distinct advantages in the trait ontology mapping process, allowing selection based on project-specific priorities.
