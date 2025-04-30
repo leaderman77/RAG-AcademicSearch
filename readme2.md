@@ -26,7 +26,7 @@ Our system employs a three-step process:
 
 Our system follows a three-step workflow for extracting, mapping, and evaluating trait information:
 
-![workflow-chart](https://github.com/user-attachments/assets/d355f6e3-50a7-4754-99dc-42c3f95fc033)
+![workflow-chart](https://github.com/user-attachments/assets/7869c893-d967-45fb-aa32-e6d979ea93e5)
 
 
 ## Input Format
@@ -64,41 +64,44 @@ Example entries:
 
 | Model | Total Traits | Exact Matches | Synonym Matches | Semantic Matches |
 |-------|--------------|---------------|-----------------|------------------|
-| Gemini 2.0 Flash | 374 | 196 (52.41%) | 24 (6.42%) | 154 (41.18%) |
-| GPT-4o-mini | 172 | 91 (52.91%) | 8 (4.65%) | 73 (42.44%) |
-| GPT-4.1-nano | 188 | 99 (52.66%) | 6 (3.19%) | 83 (44.15%) |
-| GPT-4.1-mini | 176 | 96 (54.55%) | 11 (6.25%) | 69 (39.20%) |
-| ChatGPT-4o-latest | 253 | 158 (62.45%) | 8 (3.16%) | 87 (34.39%) |
+| Gemini 2.0 Flash | 374 | 196 | 24 | 154 |
+| ChatGPT-4o-latest | 253 | 158 | 8 | 87 |
+| GPT-4.1-nano | 188 | 99 | 6 | 83 |
+| GPT-4.1-mini | 176 | 96 | 11 | 69 |
+| GPT-4o-mini | 172 | 91 | 8 | 73 |
 
 ### Unique Trait Name Statistics
 
 | Model | Total Unique Traits | Exact | Synonym | Semantic |
 |-------|---------------------|-------|---------|----------|
-| Gemini 2.0 Flash | 140 | 44 (31.43%) | 10 (7.14%) | 86 (61.43%) |
-| GPT-4o-mini | 83 | 28 (33.73%) | 5 (6.02%) | 50 (60.24%) |
-| GPT-4.1-nano | 87 | 28 (32.18%) | 3 (3.45%) | 56 (64.37%) |
-| GPT-4.1-mini | 78 | 26 (33.33%) | 6 (7.69%) | 46 (58.97%) |
-| ChatGPT-4o-latest | 93 | 36 (38.71%) | 5 (5.38%) | 52 (55.91%) |
+| Gemini 2.0 Flash | 140 | 44 | 10 | 86 |
+| ChatGPT-4o-latest | 93 | 36 | 5 | 52 |
+| GPT-4.1-nano | 87 | 28 | 3 | 56 |
+| GPT-4o-mini | 83 | 28 | 5 | 50 |
+| GPT-4.1-mini | 78 | 26 | 6 | 46 |
 
 ### Semantic Mapping Evaluation Results
 
 | Model | Total Unique Semantic Pairs | Same Biological Concept | Different Biological Concept |
 |-------|----------------------------|--------------------------|------------------------------|
-| Gemini 2.0 Flash | 86 | 53 (61.6%) | 33 (38.4%) |
-| GPT-4o-mini | 50 | 29 (58.0%) | 21 (42.0%) |
-| GPT-4.1-nano | 56 | 36 (64.3%) | 20 (35.7%) |
-| GPT-4.1-mini | 46 | 32 (69.6%) | 14 (30.4%) |
-| ChatGPT-4o-latest | 52 | 32 (61.5%) | 20 (38.5%) |
+| Gemini 2.0 Flash | 86 | 53 | 33 |
+| GPT-4.1-nano | 56 | 36 | 20 |
+| ChatGPT-4o-latest | 52 | 32 | 20 |
+| GPT-4.1-mini | 46 | 32 | 14 |
+| GPT-4o-mini | 50 | 29 | 21 |
 
 ### Overall Valid vs. Invalid Cases
+
+![model-comparison-chart](https://github.com/user-attachments/assets/8d5196d6-bf50-4868-9849-9d6a468225e7)
+
 
 | Model | Total Unique Traits | Valid Cases (Exact + Synonym + Valid Semantic) | Invalid Cases | Valid Rate |
 |-------|---------------------|-----------------------------------------------|---------------|------------|
 | Gemini 2.0 Flash | 140 | 107 | 33 | 76.43% |
-| GPT-4o-mini | 83 | 62 | 21 | 74.70% |
+| ChatGPT-4o-latest | 93 | 73 | 20 | 78.49% |
 | GPT-4.1-nano | 87 | 67 | 20 | 77.01% |
 | GPT-4.1-mini | 78 | 64 | 14 | 82.05% |
-| ChatGPT-4o-latest | 93 | 73 | 20 | 78.49% |
+| GPT-4o-mini | 83 | 62 | 21 | 74.70% |
 
 ## Cost Analysis
 
